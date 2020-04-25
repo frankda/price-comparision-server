@@ -21,3 +21,7 @@ If Coles website updated, this is not gonna work. So I need to run scraping ever
 1 day to build frontend page,
 1 day to add styles and animations
 1 day for testing.
+
+## Building Process
+### Connect Atlas MongoDB with Mongoose
+
