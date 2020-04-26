@@ -11,6 +11,15 @@ const ProductSchema = new Schema({
   }
 })
 
-const Product = mongoose.model('')
+export const Product = mongoose.model('Product', ProductSchema);
+// import { Product } from '/models/products.ts'
 
-export default Product
+// Other way to export:
+// 1.
+// export default mongoose.model('Product', ProductSchema)
+// import Product from '/models/products.ts'
+
+// 2.
+// module.export = mongoose.model('Product', ProductSchema);
+// import Product = require('/models/products.ts')
+
