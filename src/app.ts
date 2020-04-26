@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -24,7 +24,5 @@ app.set("port", process.env.PORT || 3000);
 */
 
 app.get('/', initTestData)
-
-// app.listen(port, () => console.log('listening http://localhost:' + port))
 
 export default app
