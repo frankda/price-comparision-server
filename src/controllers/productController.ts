@@ -13,6 +13,7 @@ export const initTestData = (req: Request, res: Response, next: NextFunction) =>
 }
 
 export const searchProduct = (req: Request, res: Response) => {
-  const productname = req.params.productname;
+  const productname = req.body.productname;
+  console.log(productname);
   res.json(productname);
 }

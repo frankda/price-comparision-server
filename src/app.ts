@@ -23,6 +23,6 @@ app.set("port", process.env.PORT || 3001);
 */
 
 app.get('/', initTestData)
-app.get('/search/:productname',searchProduct);
+app.post('/search',searchProduct);
 
 export default app

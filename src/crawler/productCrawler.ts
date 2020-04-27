@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 
 request
-  .get('https://www.chemistwarehouse.com.au')
+  .get('https://shop.coles.com.au/a/national/home')
   .then(res => {
     console.log(res.text)
   })
