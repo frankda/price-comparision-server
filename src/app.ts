@@ -13,7 +13,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 // Express configuration
-app.use(bodyParser.json()) // for parsing application/json
+app.use(bodyParser.json()) // for parsing application/json, so express can get request body by using req.body
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cors());
 app.set("port", process.env.PORT || 3001);
