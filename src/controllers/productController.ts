@@ -9,5 +9,10 @@ export const initTestData = (req: Request, res: Response, next: NextFunction) =>
     if (err) res.send(err);
     res.json(product);
   })
-  next();
+  // next();  // delete this if there is no next function, or will cause ERR_HTTP_HEADERS_SENT
+}
+
+export const searchProduct = (req: Request, res: Response) => {
+  const productname = req.params.productname;
+  res.json(productname);
 }
