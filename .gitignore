@@ -27,3 +27,6 @@ coverage
 benchmarks/graphs
 
 dist
+
+npm-debug.log
+/*.env
