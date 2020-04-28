@@ -2,6 +2,8 @@ import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { Request, Response, NextFunction } from "express";
+
 
 import { initTestData, searchProduct } from './controllers/productController';
 
@@ -22,7 +24,7 @@ app.set("port", process.env.PORT || 3001);
  * Primary app routes 
 */
 
-app.get('/', initTestData)
+app.get('/', (req: Request, res: Response) => res.send('Server is running'))
 app.post('/search',searchProduct);
 
 export default app
