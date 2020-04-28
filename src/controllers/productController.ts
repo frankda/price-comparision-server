@@ -13,9 +13,9 @@ export const initTestData = (req: Request, res: Response, next: NextFunction) =>
   // next();  // delete this if there is no next function, or will cause ERR_HTTP_HEADERS_SENT
 }
 
-export const searchProduct = (req: Request, res: Response) => {
+export const searchProduct = async (req: Request, res: Response) => {
   const productname = req.body.productname;
-  const html = searchChemistProduct(productname);
+  const html = await searchChemistProduct(productname);
   console.log(html)
   res.json(html);
 }
