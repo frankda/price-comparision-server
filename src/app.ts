@@ -2,7 +2,6 @@ import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { Request, Response, NextFunction } from "express";
 
 
 import { initTestData, searchProduct } from './controllers/productController';
