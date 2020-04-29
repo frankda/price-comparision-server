@@ -3,6 +3,7 @@ import { Product } from '../models/products';
 import { Request, Response, NextFunction } from "express";
 import { searchChemistProduct } from '../crawler/productCrawler';
 import cheerio from 'cheerio';
+import urls from '../urls/urlLists';
 
 // Init seed data for testing purpose
 export const initTestData = (req: Request, res: Response, next: NextFunction) => {
@@ -20,6 +21,10 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   const pricelineProducts = [];
 
   const productname = req.body.productname;   // get the search value from front-end
+
+  /*
+  ** Get product list searched from chemistwarehouse
+  */
   const result = await searchChemistProduct(productname);   // next() will be called with thrown error or the rejected value
   const html = result.text  // if the result success 
   if (!html.includes('product-name')) res.send('No matching were found');   // if cannot find matching products
@@ -28,8 +33,35 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   console.log('html page obtained')
   const $ = cheerio.load(html);
   const searchedProductsFromChemist = $("a[class='product-container search-result']");
-  console.log(searchedProductsFromChemist.eq(0).html());
 
-  
+  for (let i = 0; i < searchedProductsFromChemist.length; i++) {
+    const searchedProduct = searchedProductsFromChemist.eq(i);
+    const product = {
+      productName: '',
+      productLink: '',
+      productPrice: '',
+      productImage: '',
+    };
+    const productHtml = cheerio.html(searchedProduct)
+    const productHtmlForParsing = cheerio.load(productHtml);
+
+    product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
+    product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
+    product.productLink = urls.chemistWarehouse + searchedProduct.attr('href'); // handle link is broken
+
+    function undefinedToString (obj: string | undefined) {
+      if (typeof obj === 'string') return obj;
+    }
+    product.productImage = undefinedToString(productHtmlForParsing("div[class=product-image] img").eq(0).attr('src')); // handle link is broken
+    
+    console.log(product.productImage);
+    chemistProducts.push(product);
+  }
+
+  /*
+  ** Get the first item from priceline
+  */
+  const productNameInPriceline = chemistProducts[0].productName;
+
   res.send($("div[class=product-name]").eq(0).text());
 }

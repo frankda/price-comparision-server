@@ -1,5 +1,6 @@
 import request from 'superagent';
 import { Request, Response, NextFunction } from "express";
+import urls from '../urls/urlLists';
 
 /*
 * These codes are for errors
@@ -15,6 +16,10 @@ import { Request, Response, NextFunction } from "express";
 //   }
 // }
 
-export async function searchChemistProduct (productname: String) {
-  return await request.get(`https://www.chemistwarehouse.com.au/search?searchtext=${productname}&searchmode=allwords`)
+export async function searchChemistProduct (productname: string) {
+  return await request.get(`${ urls.chemistWarehouse }/search?searchtext=${ productname }&searchmode=allwords`);
+}
+
+export async function searchPricelineProduct (productname: string) {
+  return await request.get(`${ urls.priceline }/search/?q=${ productname }`);
 }
