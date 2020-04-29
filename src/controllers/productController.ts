@@ -49,10 +49,10 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
     product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
     product.productLink = urls.chemistWarehouse + searchedProduct.attr('href'); // handle link is broken
 
-    function undefinedToString (obj: string | undefined) {
-      if (typeof obj === 'string') return obj;
-    }
-    product.productImage = undefinedToString(productHtmlForParsing("div[class=product-image] img").eq(0).attr('src')); // handle link is broken
+    // function undefinedToString (obj: string | undefined) {
+    //   if (typeof obj === 'string') return obj;
+    // }
+    product.productImage = productHtmlForParsing("div[class=product-image] img").eq(0).attr('src')!; // use non-null assertion operator
     
     console.log(product.productImage);
     chemistProducts.push(product);
