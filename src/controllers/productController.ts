@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Product } from '../models/products';
 import { Request, Response, NextFunction } from "express";
-import { searchChemistProduct } from '../crawler/productCrawler';
+import { searchChemistProduct, getProductInfoFromPriceline, searchPricelineProduct } from '../crawler/productCrawler';
 import cheerio from 'cheerio';
 import urls from '../urls/urlLists';
 
@@ -26,7 +26,7 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   ** Get product list searched from chemistwarehouse
   */
   const result = await searchChemistProduct(productname);   // next() will be called with thrown error or the rejected value
-  const html = result.text  // if the result success 
+  const html = result.text  // if the result success
   if (!html.includes('product-name')) res.send('No matching were found');   // if cannot find matching products
 
   // use cheerio to parse search results
@@ -42,26 +42,40 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
       productPrice: '',
       productImage: '',
     };
-    const productHtml = cheerio.html(searchedProduct)
+    const productHtml = cheerio.html(searchedProduct)   // use cheerio.html() to get outer html content
     const productHtmlForParsing = cheerio.load(productHtml);
 
     product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
-    product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
+    product.productPrice = productHtmlForParsing("span[class=Price]").eq(0).text().trim();
     product.productLink = urls.chemistWarehouse + searchedProduct.attr('href'); // handle link is broken
-
-    // function undefinedToString (obj: string | undefined) {
-    //   if (typeof obj === 'string') return obj;
-    // }
     product.productImage = productHtmlForParsing("div[class=product-image] img").eq(0).attr('src')!; // use non-null assertion operator
-    
-    console.log(product.productImage);
+
     chemistProducts.push(product);
+    console.log(chemistProducts)
   }
 
   /*
   ** Get the first item from priceline
   */
-  const productNameInPriceline = chemistProducts[0].productName;
+  console.log('Scraping priceline');
+  // console.log(chemistProducts[0].productName);
 
-  res.send($("div[class=product-name]").eq(0).text());
+  // const pricelineHtml = (await searchPricelineProduct(chemistProducts[0].productName)).text;
+  // const p$ = cheerio.load(pricelineHtml);
+  // const pricelineProduct = {
+  //   productName: '',
+  //   productLink: '',
+  //   productPrice: '',
+  //   productImage: '',
+  // };
+  // if (!pricelineHtml.includes('product-name')) res.send('No matching product in Priceline were found');
+
+  // pricelineProduct.productImage = p$("div[class='item type-simple'] img").eq(0).attr('src')!;
+  // pricelineProduct.productName = p$("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(0).text() + $("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(1).text();
+  // pricelineProduct.productLink = p$("div[class='item type-simple'] a").eq(0).attr('href')!;
+  // pricelineProduct.productPrice = p$("div[class='item type-simple'] div[class='price-box'] span[class=price]").eq(0).text();
+
+  // console.log(pricelineProduct)
+
+  res.send(chemistProducts);
 }

@@ -1,10 +1,9 @@
 import request from 'superagent';
 import { Request, Response, NextFunction } from "express";
 import urls from '../urls/urlLists';
+import cheerio from 'cheerio';
 
-/*
-* These codes are for errors
-*/
+
 // export async function searchChemistProduct (next: NextFunction, productname: String) {
 //   try {
 //     const result = await request.get(`https://www.chemistwarehouse.com.au/search?searchtext=${productname}&searchmode=allwords`)
@@ -20,6 +19,59 @@ export async function searchChemistProduct (productname: string) {
   return await request.get(`${ urls.chemistWarehouse }/search?searchtext=${ productname }&searchmode=allwords`);
 }
 
+// export async function searchPricelineProduct (productname: string) {
+//   let result = {text: ''};
+//   try {
+//    result = await request.get(`${ urls.priceline }/search/?q=${ productname }`);
+//   } catch (err) {
+//    result = {text: ''};
+//   }
+//   return result
+// }
+
 export async function searchPricelineProduct (productname: string) {
-  return await request.get(`${ urls.priceline }/search/?q=${ productname }`);
+  console.log(productname.trim().replace(' ', '%20'));
+  productname = productname.trim().replace(' ', '%20');
+  console.log(`${ urls.priceline }/search/?q=${ productname }`)
+  return await request.get(`https://www.priceline.com.au/search/?q=test`);
 }
+
+export async function getProductInfoFromPriceline (req: Request, res: Response, productname: string) {
+  const html = (await searchPricelineProduct(productname)).text;
+  const $ = cheerio.load(html);
+  const product = {
+    productName: '',
+    productLink: '',
+    productPrice: '',
+    productImage: '',
+  };
+  if (!html.includes('product-name')) res.send('No matching product in Priceline were found');
+
+  product.productImage = $("div[class='item type-simple'] img").eq(0).attr('src')!;
+  product.productName = $("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(0).text() + $("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(1).text();
+  product.productLink = $("div[class='item type-simple'] a").eq(0).attr('href')!;
+  product.productPrice = $("div[class='item type-simple'] div[class='price-box'] span[class=price]").eq(0).text();
+  
+  return product;
+}
+
+// async function test (productname: string) {
+//   const html = (await searchPricelineProduct(productname)).text;
+//   const $ = cheerio.load(html);
+//   const product = {
+//     productName: '',
+//     productLink: '',
+//     productPrice: '',
+//     productImage: '',
+//   };
+
+//   product.productImage = $("div[class='item type-simple'] img").eq(0).attr('src')!;
+//   product.productName = $("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(0).text() + $("div[class='item type-simple'] div[class='product-name brand-name'] span").eq(1).text();
+//   product.productLink = $("div[class='item type-simple'] a").eq(0).attr('href')!;
+//   product.productPrice = $("div[class='item type-simple'] div[class='price-box'] span[class=price]").eq(0).text();
+  
+//   return product;
+// }
+
+// const testproduct = await test('test').catch(()=>{'bad luck'});
+// console.log(testproduct)

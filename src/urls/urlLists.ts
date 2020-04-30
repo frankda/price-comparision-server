@@ -2,5 +2,5 @@
 
 export default {
   chemistWarehouse: 'https://www.chemistwarehouse.com.au',
-  priceline: 'https://www.priceline.com.au/',
+  priceline: 'https://www.priceline.com.au',
 }
