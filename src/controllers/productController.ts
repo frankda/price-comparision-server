@@ -26,29 +26,30 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   ** Get product list searched from chemistwarehouse
   */
   const result = await searchChemistProduct(productname);   // next() will be called with thrown error or the rejected value
-  const html = result.text  // if the result success
-  if (!html.includes('product-name')) res.send('No matching were found');   // if cannot find matching products
+  // const html = result.text  // if the result success
+  const itemList = result.body.universes.universe[0]["items-section"].items.item;
+  console.log(itemList);
+  // res.send(jsonhtml);
+  if (!itemList.length) res.send('No matching were found');   // if cannot find matching products
 
   // use cheerio to parse search results
-  console.log('html page obtained')
-  const $ = cheerio.load(html);
-  const searchedProductsFromChemist = $("a[class='search__result__product']");
+  console.log('json obtained')
+  // const $ = cheerio.load(html);
+  // const searchedProductsFromChemist = $("a[class='search__result__product']");
 
-  for (let i = 0; i < searchedProductsFromChemist.length; i++) {
-    const searchedProduct = searchedProductsFromChemist.eq(i);
+  for (let i = 0; i < itemList.length; i++) {
     const product = {
       productName: '',
       productLink: '',
       productPrice: '',
       productImage: '',
     };
-    const productHtml = cheerio.html(searchedProduct)   // use cheerio.html() to get outer html content
-    const productHtmlForParsing = cheerio.load(productHtml);
+    // const productHtml = cheerio.html(searchedProduct)   // use cheerio.html() to get outer html content
 
-    product.productName = productHtmlForParsing("div[class=search__result__product__name]").eq(0).text();
-    product.productPrice = productHtmlForParsing("div[class=search__result__product__price]").eq(0).text().trim();
-    product.productLink = productHtmlForParsing("a").eq(0).attr('href')!;
-    product.productImage = productHtmlForParsing("div[class=search__result__product__image-holder] img").eq(0).attr('src')!; // use non-null assertion operator
+    product.productName = itemList[i].attribute[2].value[0].value;
+    product.productPrice = itemList[i].attribute[5].value[0].value;
+    product.productLink = itemList[i].attribute[7].value[0].value
+    product.productImage = itemList[i].attribute[4].value[0].value;
 
     chemistProducts.push(product);
     console.log(chemistProducts)
@@ -57,7 +58,7 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   /*
   ** Get the first item from priceline
   */
-  console.log('Scraping priceline');
+  // console.log('Scraping priceline');
   // console.log(chemistProducts[0].productName);
 
   // const pricelineHtml = (await searchPricelineProduct(chemistProducts[0].productName)).text;
