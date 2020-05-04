@@ -32,7 +32,7 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   // use cheerio to parse search results
   console.log('html page obtained')
   const $ = cheerio.load(html);
-  const searchedProductsFromChemist = $("a[class='product-container search-result']");
+  const searchedProductsFromChemist = $("a[class='search__result__product']");
 
   for (let i = 0; i < searchedProductsFromChemist.length; i++) {
     const searchedProduct = searchedProductsFromChemist.eq(i);
@@ -45,10 +45,10 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
     const productHtml = cheerio.html(searchedProduct)   // use cheerio.html() to get outer html content
     const productHtmlForParsing = cheerio.load(productHtml);
 
-    product.productName = productHtmlForParsing("div[class=product-name]").eq(0).text();
-    product.productPrice = productHtmlForParsing("span[class=Price]").eq(0).text().trim();
-    product.productLink = urls.chemistWarehouse + searchedProduct.attr('href'); // handle link is broken
-    product.productImage = productHtmlForParsing("div[class=product-image] img").eq(0).attr('src')!; // use non-null assertion operator
+    product.productName = productHtmlForParsing("div[class=search__result__product__name]").eq(0).text();
+    product.productPrice = productHtmlForParsing("div[class=search__result__product__price]").eq(0).text().trim();
+    product.productLink = productHtmlForParsing("a").eq(0).attr('href')!;
+    product.productImage = productHtmlForParsing("div[class=search__result__product__image-holder] img").eq(0).attr('src')!; // use non-null assertion operator
 
     chemistProducts.push(product);
     console.log(chemistProducts)
