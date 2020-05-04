@@ -30,7 +30,7 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   const itemList = result.body.universes.universe[0]["items-section"].items.item;
   console.log(itemList);
   // res.send(jsonhtml);
-  if (!itemList.length) res.send('No matching were found');   // if cannot find matching products
+  if (!itemList) res.send('No matching were found');   // if cannot find matching products
 
   // use cheerio to parse search results
   console.log('json obtained')

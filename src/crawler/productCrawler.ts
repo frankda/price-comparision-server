@@ -16,6 +16,7 @@ import cheerio from 'cheerio';
 // }
 
 export async function searchChemistProduct (productname: string) {
+  productname = productname.replace(' ', '%20');
   return await request.get(`https://www.chemistwarehouse.com.au/searchapi/webapi/search/terms?category=catalog01_chemau&term=${productname}&index=0&sort=`);
 }
 
