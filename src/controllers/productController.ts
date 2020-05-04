@@ -27,10 +27,16 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
   */
   const result = await searchChemistProduct(productname);   // next() will be called with thrown error or the rejected value
   // const html = result.text  // if the result success
-  const itemList = result.body.universes.universe[0]["items-section"].items.item;
-  console.log(itemList);
+  let itemList = [];
+  try {
+    itemList = result.body.universes.universe[0]["items-section"].items.item;
+    console.log(itemList);
+  } catch {
+    res.send('No matching were found'); 
+    next();
+  }
+  
   // res.send(jsonhtml);
-  if (!itemList) res.send('No matching were found');   // if cannot find matching products
 
   // use cheerio to parse search results
   console.log('json obtained')
@@ -48,8 +54,17 @@ export const searchProduct = async (req: Request, res: Response, next: NextFunct
 
     product.productName = itemList[i].attribute[2].value[0].value;
     product.productPrice = itemList[i].attribute[5].value[0].value;
-    product.productLink = itemList[i].attribute[7].value[0].value
-    product.productImage = itemList[i].attribute[4].value[0].value;
+    try {
+      product.productLink = itemList[i].attribute[7].value[0].value;
+    } catch {
+      console.log('Product Link cannot find');
+    }
+    if (itemList[i].attribute[4].value[0].value.includes('http')) {
+      product.productImage = itemList[i].attribute[4].value[0].value;
+    } else {
+      product.productImage = itemList[i].attribute[3].value[0].value;
+    }
+    
 
     chemistProducts.push(product);
     console.log(chemistProducts)
