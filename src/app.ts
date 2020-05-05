@@ -9,7 +9,7 @@ import { initTestData, searchProduct } from './controllers/productController';
 const app = express();
 
 // Connect Mongodb atlas and check if connected
-mongoose.connect(`mongodb+srv://frank:dqx910418@cluster0-fxva0.mongodb.net/test?retryWrites=true&w=majority`, { useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connect(`mongodb+srv://@cluster0-fxva0.mongodb.net/test?retryWrites=true&w=majority`, { useUnifiedTopology: true, useNewUrlParser: true })
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
